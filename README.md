@@ -72,8 +72,8 @@ LingBot-Map has focused on:
 - ✅ Release evaluation benchmark
   - ✅ Oxford Spires dataset
   - ✅ KITTI dataset
-  - ⬜ VBR dataset
-  - ⬜ Droid-W dataset
+  - ✅ VBR dataset
+  - ✅ Droid-W dataset
   - ⬜ TUM-D dataset
   - ⬜ 7-scenes dataset
   - ⬜ ETH3D dataset

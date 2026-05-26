@@ -54,7 +54,7 @@ bash envs/install_lingbot_map.sh
 
 ```bash
 # 示例：Oxford Spires base config。其他开箱即用的数据集——
-# eth3d / kitti / nrgbd / oxford（+ oxford_long） / 7scenes / sintel / tnt——
+# eth3d / kitti / nrgbd / oxford（+ oxford_long） / 7scenes / sintel / tnt / vbr / droid_w——
 # 流程一致，把 config 文件名换掉即可。
 python prepare.py  --config configs/oxford.yaml
 python run.py      --config configs/oxford.yaml
@@ -480,7 +480,7 @@ def evaluate_pointcloud(gt_loader, pred_loader, logger, options=None):
 
 ## 已支持的数据集
 
-数据集适配器位于 `datasets/`，由 base config 通过 `datasets:` 字段引用。当前内置的适配器有：`eth3d`、`kitti`、`neural_rgbd`、`oxford_spires`、`seven_scenes`、`sintel`、`tnt`，另含一个 `general` 适配器，用于任意图像目录或视频文件（可选 COLMAP 集成自动估出内外参）。
+数据集适配器位于 `datasets/`，由 base config 通过 `datasets:` 字段引用。当前内置的适配器有：`eth3d`、`kitti`、`neural_rgbd`、`oxford_spires`、`seven_scenes`、`sintel`、`tnt`、`vbr`、`droid_w`，另含一个 `general` 适配器，用于任意图像目录或视频文件（可选 COLMAP 集成自动估出内外参）。
 
 开箱即用的 base config：
 
@@ -494,8 +494,36 @@ def evaluate_pointcloud(gt_loader, pred_loader, logger, options=None):
 | `configs/oxford_long.yaml` | `oxford_spires`（stride 1，长序列） | traj |
 | `configs/sintel.yaml` | `sintel` | traj |
 | `configs/tnt.yaml` | `tnt` | traj + AUC |
+| `configs/vbr.yaml` | `vbr`（cover-fit 504x280） | traj |
+| `configs/droid_w.yaml` | `droid_w`（宽度 518） | traj |
 
 具体的数据集参数（raw data root、采样 stride、depth clip 等）在 `configs/datasets/<name>.yaml` 中配置。
+
+### VBR 与 DROID-W
+
+两个仅评估轨迹的数据集，作为开箱即用示例内置。均按标准三段式命令运行：
+
+```bash
+# VBR（Vision Benchmark in Rome）——RGB + C2W TUM 轨迹 + 3x3 内参。
+python prepare.py  --config configs/vbr.yaml
+python run.py      --config configs/vbr.yaml
+python evaluate.py --config configs/vbr.yaml
+
+# DROID-W——RGB + C2W TUM 轨迹（按时间戳关联 GT）。
+python prepare.py  --config configs/droid_w.yaml
+python run.py      --config configs/droid_w.yaml
+python evaluate.py --config configs/droid_w.yaml
+```
+
+数据来源：
+
+- **DROID-W**——从 [MoyangLi00/DROID-W](https://github.com/MoyangLi00/DROID-W) 下载。
+- **VBR**——按 [Junyi42/LoGeR](https://github.com/Junyi42/LoGeR) 的预处理流程得到对齐后的数据。
+
+运行前，编辑数据集配置使其指向本地数据根目录：
+
+- `configs/datasets/vbr.yaml` —— `raw_data_root` 下应有 `{scene}_processed_aligned/` 目录（含 `rgb/`、`intrinsics.txt`）以及同级的 `processed_gt/{scene}_gt.txt`。`_target_size: [W, H]`（均为 14 的倍数）会对每帧做 cover-fit 缩放 + 中心裁剪，并同步更新内参。
+- `configs/datasets/droid_w.yaml` —— `raw_data_root` 下应有按场景划分的目录（如 `downtown1/`），每个含 `images_anonymized/`（以 Unix 时间戳命名的 JPEG）和 `traj_gt.txt` / `traj_gt_fastlivo.txt`。`_load_img_size` 设定目标宽度（高度等比缩放并向下取整到 14 的倍数）；GT 位姿按最近时间戳与帧关联。
 
 ---
 

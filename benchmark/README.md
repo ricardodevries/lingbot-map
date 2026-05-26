@@ -52,7 +52,7 @@ The shipped YAML files use `/path/to/...` placeholders. Before running anything,
 
 ```bash
 # Example: Oxford Spires base config. Other shipped datasets —
-# eth3d / kitti / nrgbd / oxford (+ oxford_long) / 7scenes / sintel / tnt —
+# eth3d / kitti / nrgbd / oxford (+ oxford_long) / 7scenes / sintel / tnt / vbr / droid_w —
 # follow the same three-command pattern.
 python prepare.py  --config configs/oxford.yaml
 python run.py      --config configs/oxford.yaml
@@ -446,7 +446,7 @@ Aggregation modes (configured via `evaluation.auc.aggregation`):
 
 ## Supported Datasets
 
-Dataset adapters live in `datasets/` and are referenced from base configs via the `datasets:` field. Adapters currently shipped: `eth3d`, `kitti`, `neural_rgbd`, `oxford_spires`, `seven_scenes`, `sintel`, `tnt`, plus a `general` adapter that wraps an ad-hoc image folder or video file (optional COLMAP integration for intrinsics/extrinsics).
+Dataset adapters live in `datasets/` and are referenced from base configs via the `datasets:` field. Adapters currently shipped: `eth3d`, `kitti`, `neural_rgbd`, `oxford_spires`, `seven_scenes`, `sintel`, `tnt`, `vbr`, `droid_w`, plus a `general` adapter that wraps an ad-hoc image folder or video file (optional COLMAP integration for intrinsics/extrinsics).
 
 Ready-to-use base configs under `configs/`:
 
@@ -460,8 +460,36 @@ Ready-to-use base configs under `configs/`:
 | `configs/oxford_long.yaml` | `oxford_spires` (stride 1, long sequences) | traj |
 | `configs/sintel.yaml` | `sintel` | traj |
 | `configs/tnt.yaml` | `tnt` | traj + AUC |
+| `configs/vbr.yaml` | `vbr` (cover-fit 504x280) | traj |
+| `configs/droid_w.yaml` | `droid_w` (width 518) | traj |
 
 Per-dataset settings (raw data root, sampling stride, depth clip, ...) live in `configs/datasets/<name>.yaml`.
+
+### VBR and DROID-W
+
+Two trajectory-only datasets shipped as drop-in examples. Both run via the standard three-command pattern:
+
+```bash
+# VBR (Vision Benchmark in Rome) — RGB + C2W TUM trajectory + 3x3 intrinsics.
+python prepare.py  --config configs/vbr.yaml
+python run.py      --config configs/vbr.yaml
+python evaluate.py --config configs/vbr.yaml
+
+# DROID-W — RGB + C2W TUM trajectory (timestamp-associated GT).
+python prepare.py  --config configs/droid_w.yaml
+python run.py      --config configs/droid_w.yaml
+python evaluate.py --config configs/droid_w.yaml
+```
+
+Data sources:
+
+- **DROID-W** — download from [MoyangLi00/DROID-W](https://github.com/MoyangLi00/DROID-W).
+- **VBR** — follow the preprocessing in [Junyi42/LoGeR](https://github.com/Junyi42/LoGeR) to obtain the aligned data.
+
+Before running, edit the dataset configs to point at your local data root:
+
+- `configs/datasets/vbr.yaml` — `raw_data_root` expects `{scene}_processed_aligned/` dirs (with `rgb/`, `intrinsics.txt`) plus a sibling `processed_gt/{scene}_gt.txt`. `_target_size: [W, H]` (multiples of 14) cover-fit resizes and center-crops each frame, updating intrinsics accordingly.
+- `configs/datasets/droid_w.yaml` — `raw_data_root` expects per-scene dirs (e.g. `downtown1/`) each holding `images_anonymized/` (JPEGs named by Unix timestamp) and a `traj_gt.txt` / `traj_gt_fastlivo.txt`. `_load_img_size` sets the target width (height scaled and floored to a multiple of 14); GT poses are matched to frames by nearest timestamp.
 
 ---
 
