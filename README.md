@@ -461,6 +461,12 @@ For the second clip, run the same command with `--video_path /data/demo_videos/l
 
 All flags are identical to the [outdoor drive scene](#worked-example--outdoor-drive-scene) above — only the input video and output folder change. See the drive scene and indoor walkthrough tables for the flag-by-flag rationale.
 
+<img width="3736" height="1080" alt="image" src="https://github.com/user-attachments/assets/1f60d505-1407-482c-9b5d-57c7145c0b7d" />
+
+<img width="1200" height="339" alt="image" src="https://github.com/user-attachments/assets/e62bedaa-1e61-40b3-8fea-01c8a15355f0" />
+
+
+
 ### Camera Path (YAML)
 
 The virtual camera path is described by the `camera.segments` list in the YAML preset passed via `--config`. Edit the YAML to design your own shot — no need to touch CLI flags.
