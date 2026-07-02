@@ -32,11 +32,9 @@ Two conda envs are involved:
 | `lingbot_map` | Method side. Holds PyTorch and the upstream [lingbot-map](https://github.com/robbyant/lingbot-map) package. `run_worker.py` runs inside this env to execute the model. |
 
 ```bash
-# Framework env (mandatory).
-bash envs/install_bench.sh
-
-# Method env (mandatory if you want to run the lingbot_map method).
-bash envs/install_lingbot_map.sh
+pip install evo
+pip install OpenEXR
+pip install six
 ```
 
 If you already followed the upstream lingbot-map install, a `lingbot_map` env already exists. The script detects it and appends benchmark-side deps (open3d, evo, OpenEXR, ...) into it so that `run_worker.py` can read/write BSS data from inside the method env. Non-interactive flags: `--append` (append to existing env), `--force` (rebuild from scratch).
