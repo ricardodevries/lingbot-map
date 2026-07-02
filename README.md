@@ -402,6 +402,36 @@ Flag-by-flag rationale:
 | `--frame_tag --frame_tag_position top_right` | Stamp a `<i> / <N> Frames` counter in the top-right corner of the MP4. |
 | `--save_predictions` | Persist per-frame NPZs alongside the MP4. Useful for inspection or for re-rendering with different camera/overlay settings later. |
 
+### Worked Example — outdoor drive scene
+
+**Dataset:** Download the example video from [robbyant/lingbot-map-demo](https://huggingface.co/datasets/robbyant/lingbot-map-demo/tree/main) on Hugging Face.
+
+```bash
+    python demo_render/batch_demo.py \
+    --video_path /data/demo_videos/drive_frames.mp4 \
+    --output_folder /data/outputs/drive/ \
+    --model_path /path/to/lingbot-map.pt \
+    --config demo_render/config/outdoor_drive.yaml \
+    --mode windowed --window_size 128 \
+    --max_non_keyframe_gap 100 --overlap_keyframes 8 \
+    --image_stride 1 \
+    --sky_mask_dir /data/outputs/sky_masks \
+    --sky_mask_visualization_dir /data/outputs/sky_mask_viz \
+    --camera_vis default --keyframes_only_points \
+    --frame_tag --frame_tag_position top_right \
+    --save_predictions
+```
+
+What differs from the indoor walkthrough above:
+
+| Flag | Why it's there |
+|---|---|
+| `--config demo_render/config/outdoor_drive.yaml` | Seed defaults from the outdoor preset: sky masking enabled, deeper render range (`max_depth: 250`), and a follow cam tuned for vehicle trajectories with a final birdeye reveal. |
+| `--image_stride 1` | Use every video frame. Increase it to subsample long or high-FPS drive footage. |
+| `--max_non_keyframe_gap 100` | Upper bound on consecutive non-keyframes before a keyframe is forced. Only active with flow-based keyframe selection (`--flow_threshold > 0`); in the default fixed-interval mode it has no effect. |
+
+The remaining flags (`--mode windowed --window_size 128`, `--overlap_keyframes 8`, sky-mask caching, overlays, `--save_predictions`) carry over unchanged from the indoor example — see the flag-by-flag table above.
+
 ### Camera Path (YAML)
 
 The virtual camera path is described by the `camera.segments` list in the YAML preset passed via `--config`. Edit the YAML to design your own shot — no need to touch CLI flags.
