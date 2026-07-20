@@ -224,6 +224,14 @@ python demo.py \
     --stride 2
 ```
 
+
+
+https://github.com/user-attachments/assets/567b6e9b-1cbf-402a-96be-9bab70715ec3
+
+
+
+
+
 ### Streaming with Keyframe Interval
 
 Use `--keyframe_interval` to reduce KV cache memory by only keeping every N-th frame as a keyframe. Non-keyframe frames still produce predictions but are not stored in the cache. This is useful for long sequences which exceed 320 frames (We train with video RoPE on 320 views, so performance degrades when the KV cache stores more than 320 views. Using a keyframe strategy allows inference over longer sequences.).
