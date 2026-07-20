@@ -397,7 +397,7 @@ Flag-by-flag rationale:
 | `--save_predictions` | Persist per-frame NPZs alongside the MP4. Useful for inspection or for re-rendering with different camera/overlay settings later. |
 
 
-Replacing keyframe_interval = 10 with image_stride = 10 speeds up rendering. Then, comment out the camera follow section in demo_render/config/indoor.yaml and set the birdeye's ranges to [2000, 2500] to reproduce the indoor fly-through effect shown in the demo:
+Replacing keyframe_interval = 10 with image_stride = 10 speeds up rendering. Then, uncomment the camera follow section in demo_render/config/indoor.yaml and set the birdeye's ranges to [2000, 2500] to reproduce the indoor fly-through effect shown in the demo:
 
 <img width="3822" height="1080" alt="image" src="https://github.com/user-attachments/assets/5581d2b2-cb86-4187-a13d-46ac9a22ce99" />
 
