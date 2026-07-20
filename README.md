@@ -234,7 +234,7 @@ https://github.com/user-attachments/assets/567b6e9b-1cbf-402a-96be-9bab70715ec3
 
 ### Streaming with Keyframe Interval
 
-Use `--keyframe_interval` to reduce KV cache memory by only keeping every N-th frame as a keyframe. Non-keyframe frames still produce predictions but are not stored in the cache. This is useful for long sequences which exceed 320 frames (We train with video RoPE on 320 views, so performance degrades when the KV cache stores more than 320 views. Using a keyframe strategy allows inference over longer sequences.).
+Use `--keyframe_interval` to reduce KV cache memory by only keeping every N-th frame as a keyframe. Non-keyframe frames still produce predictions but are not stored in the cache. This is useful for long sequences which exceed 320 frames (We train with video RoPE on 320 views, so performance degrades when the KV cache stores more than 320 views. Using a keyframe strategy allows inference over longer sequences.). In demo.py, the keyframe interval is calculated automatically.
 
 > **Note on inference range.** Our method does not perform state resetting by default, so the maximum inference range is bounded by the longest distance seen during training on the dataset. Beyond that distance, state resetting becomes necessary. If you observe pose collapse, switch to windowed mode (`--mode windowed`) — in most cases tuning `--keyframe_interval` alone is enough and the rest of the windowed parameters can stay at their defaults.
 
@@ -242,7 +242,7 @@ Use `--keyframe_interval` to reduce KV cache memory by only keeping every N-th f
 ### Windowed Inference (for long sequences, >3000 frames)
 
 ```bash
-python demo.py --model_path /path/to/lingbot-map-long.pt \
+python demo.py --model_path /path/to/lingbot-map.pt \
     --video_path video.mp4 --fps 10 \
     --mode windowed --window_size 128 --overlap_keyframes 16 --keyframe_interval 2 
 ```
@@ -401,7 +401,11 @@ Replacing keyframe_interval = 10 with image_stride = 10 speeds up rendering. The
 
 
 
-https://github.com/user-attachments/assets/8c4e30a2-5dcd-4184-880f-bd457f4b5416
+
+
+https://github.com/user-attachments/assets/21b444ea-e6b6-48f0-8b34-3acad41166ac
+
+
 
 
 
